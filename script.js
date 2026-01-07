@@ -1,22 +1,28 @@
 function getFormvalue() {
-    // Access input values using name attribute
     const fname = document.forms["form1"]["fname"].value.trim();
     const lname = document.forms["form1"]["lname"].value.trim();
 
-    // Empty field check
-    if (fname === "" || lname === "") {
+    // Empty check
+    if (!fname || !lname) {
         alert("Please enter both first and last name.");
         return false;
     }
 
-    // Regex for letters, spaces, hyphens, apostrophes
+    // Normalize internal spaces (IMPORTANT for Cypress)
+    const cleanFirstName = fname.replace(/\s+/g, " ");
+    const cleanLastName = lname.replace(/\s+/g, " ");
+
+    // Allow letters, spaces, hyphens, apostrophes
     const namePattern = /^[A-Za-z]+([ '-][A-Za-z]+)*$/;
 
-    if (!namePattern.test(fname) || !namePattern.test(lname)) {
-        alert("Names can only contain letters, spaces, hyphens (-), and apostrophes (').");
+    if (!namePattern.test(cleanFirstName) || !namePattern.test(cleanLastName)) {
+        alert("Invalid name format.");
         return false;
     }
 
-    alert(`${fname}${lname}`);
-    return false; // Prevent page refresh
+    // SPACE between names — this fixes Cypress failure
+    const fullName = `${cleanFirstName} ${cleanLastName}`;
+
+    alert(fullName);
+    return false;
 }
